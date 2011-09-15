@@ -266,6 +266,7 @@
             $row = mysql_fetch_assoc(mysql_query('SELECT `killed_by_uuid`, COUNT(`killed_by_uuid`) kills
                                                     FROM kills
                                                     WHERE `killed_uuid` IS NOT NULL
+                                                    	AND `killed_uuid` != " "
                                                     	AND `killed_by_uuid` IS NOT NULL
                                                     	AND `killed_by_uuid` != " "
                                                     GROUP BY `killed_by_uuid`
@@ -274,104 +275,46 @@
         }
         
         public function getMostKilledPVP() {
-            $highest = 0;
-            $playerOfHighest = null;
-            
-            foreach ($this->getAllPlayers() as $player) {
-            	$res = $player->getPlayerDeathTableCreature(QueryUtils::getCreatureIdByName("Player"));
-            	
-            	if ($res)
-                	$test = count($res);
-                	else
-                	$test = 0;
-                	
-                if ($test > $highest) {
-                    $highest = $test;
-                    $playerOfHighest = $player;
-                }
-            }
-            
-            return $playerOfHighest;
+            $row = mysql_fetch_assoc(mysql_query('SELECT `killed_uuid`, COUNT(`killed_uuid`) killed
+                                                    FROM kills
+                                                    WHERE `killed_uuid` IS NOT NULL
+                                                    	AND `killed_uuid` != " "
+                                                    	AND `killed_by_uuid` IS NOT NULL
+                                                    	AND `killed_by_uuid` != " "
+                                                    GROUP BY `killed_uuid`
+                                                    ORDER BY killed DESC'));
+            return $this->getPlayer($row['killed_uuid']);
         }
         
         public function getMostDangerousWeapon() {
-            $highest = 0;
-            $idOfHighest = -1;
-            $idOfNone = QueryUtils::getResourceIdByName("None");
-            
-            foreach (QueryUtils::getResourceTable() as $resource) {
-            	if ($resource['resource_id'] == $idOfNone) continue;
-            	
-            	$res = $this->getKillTableUsing($resource['resource_id']);
-            	
-            	if ($res)
-                	$test = count($res);
-                	else
-                	$test = 0;
-                	
-                if ($test > $highest) {
-                    $highest = $test;
-                    $idOfHighest = $resource['resource_id'];
-                }
-            }
-            
-            return $idOfHighest;
+            $row = mysql_fetch_assoc(mysql_query('SELECT `killed_using`, COUNT(`killed_using`) weapon
+                                                                FROM kills 
+                                                                WHERE killed_using != -1                                                               
+                                                                GROUP BY `killed_using`
+                                                                ORDER BY weapon DESC'));
+            return $row['killed_using'];
         }
         
         public function getMostDangerousPVECreature() {
-        	$ignoreID = QueryUtils::getCreatureIdByName("Player");
-        	$noneID = QueryUtils::getCreatureIdByName("None");
-        	$blockID = QueryUtils::getCreatureIdByName("Block");
-        	
-        	$highest = 0;
-        	$idOfHighest = 0;
-        	
-        	foreach (QueryUtils::getCreatureTable() as $creatureRow) {
-        		
-        		if ($creatureRow['id'] == $ignoreID) continue;
-        		if ($creatureRow['id'] == $noneID) continue;
-        		if ($creatureRow['id'] == $blockID) continue;
-        		
-        		$res = $this->getKillTableCreature($creatureRow['id']);
-        		
-        		if ($res)
-        			$test = count($res);
-        			else
-        			$test = 0;
-        		
-        		if ($test > $highest) {
-        			$highest = $test;
-        			$idOfHighest = $creatureRow['id'];
-        		}
-        	}
-        	
-        	return $idOfHighest;
+            $row = mysql_fetch_assoc(mysql_query('SELECT `killed_by`, COUNT(`killed_by`) creature
+                                                    FROM kills 
+                                                    WHERE killed_by != 999                                                     
+                                                    	AND killed_by != 0
+                                                    	AND killed_by != 18
+                                                    GROUP BY `killed_by`
+                                                    ORDER BY creature DESC'));
+            return $row['killed_by'];            
         }
         
         public function getMostKilledPVECreature() {
-        	$ignoreID = QueryUtils::getCreatureIdByName("Player");
-        	$noneID = QueryUtils::getCreatureIdByName("None");
-        	$highest = 0;
-        	$idOfHighest = 0;
-        	
-        	foreach (QueryUtils::getCreatureTable() as $creatureRow) {
-        		
-        		if ($creatureRow['id'] == $ignoreID) continue;
-        		if ($creatureRow['id'] == $noneID) continue;
-        		
-        		$res = $this->getDeathTableCreature($creatureRow['id']);
-        		if ($res)
-        		$test = count($res);
-        		else
-        		$test = 0;
-        		
-        		if ($test > $highest) {
-        			$highest = $test;
-        			$idOfHighest = $creatureRow['id'];
-        		}
-        	}
-        	
-        	return $idOfHighest;
+            $row = mysql_fetch_assoc(mysql_query('SELECT `killed`, COUNT(`killed`) c_kills
+                                                                FROM kills 
+                                                                WHERE killed != 999                                                     
+                                                                	AND killed != 0
+                                                                	AND killed != 18
+                                                                GROUP BY `killed`
+                                                                ORDER BY c_kills DESC'));
+            return $row['killed'];
         }
 		
 		public function getKillTableCreature($creatureTypeId) {
