@@ -73,7 +73,7 @@ $serverObj = $sObj->getServer();
         <?php
             $end = microtime(true);            
             $laufzeit = $end - $start;
-            echo "Laufzeit: ".round($laufzeit, 4)." Sekunden!";
+            echo "Laufzeit: ".round($laufzeit, 2)." Sekunden!";
          ?>
         </div>
 </body>

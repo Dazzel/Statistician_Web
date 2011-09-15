@@ -29,27 +29,22 @@
 		}
 
 		public function getAllPlayers() {
-			$uuids = QueryUtils::get2DArrayFromQuery('SELECT uuid FROM players ORDER BY player_name ASC');
-			
-			if (!$uuids) return array();
-			
-			$playerArray = array();
-			foreach($uuids as $uuid) {
-				array_push($playerArray,$this->getPlayer($uuid['uuid']));
-			}
-			return $playerArray;
+            return  mysql_num_rows(mysql_query('SELECT uuid FROM players'));
+		}
+		
+		public function getAllPlayersOnlineCount() {
+		    return  mysql_num_rows(mysql_query('SELECT uuid FROM players WHERE online = "Y"'));
 		}
 		
 		public function getAllPlayersOnline() {
-			$uuids = QueryUtils::get2DArrayFromQuery('SELECT uuid FROM players WHERE online = "Y" ORDER BY player_name ASC');
-			
-			if (!$uuids) return array();
-			
-			$playerArray = array();
-			foreach($uuids as $uuid) {
-				array_push($playerArray,$this->getPlayer($uuid['uuid']));
+			$query = mysql_query('SELECT uuid FROM players WHERE online = "Y" ORDER BY player_name ASC');
+			$ar = array();			
+			while($row = mysql_fetch_assoc($query)) {
+			    $ar[] = $this->getPlayer($row['uuid']);
 			}
-			return $playerArray;
+				
+			return $ar;
+			
 		}
 		
 		public function getPlayersTable($limit = false, $limitStart = 0, $limitNumber = 0) {
@@ -198,11 +193,23 @@
 			return QueryUtils::get2DArrayFromQuery("SELECT * FROM pickup_drop");
 		}
 		
+		public function getTotalKills() {
+		    $row = mysql_fetch_assoc(mysql_query('SELECT COUNT(id) total FROM kills'));
+		    return $row['total'];
+		}
+		
 		public function getKillTable($limit = false, $limitStart = 0, $limitNumber = 0) {
 			if (!$limit)
 				return QueryUtils::get2DArrayFromQuery('SELECT * FROM kills ORDER BY id DESC');
 			else 
 				return QueryUtils::get2DArrayFromQuery('SELECT * FROM kills ORDER BY id DESC LIMIT '.$limitStart.', '.$limitNumber);
+		}
+		
+		public function getTotalPVPKills() {
+		    $row = mysql_fetch_assoc(mysql_query('SELECT COUNT(id) total FROM kills
+                                                    WHERE killed = 999 
+		    											AND killed_by = 999'));
+		    return $row['total'];		    
 		}
 		
 		public function getKillTablePVP($limit = false, $limitStart = 0, $limitNumber = 0) {
@@ -217,6 +224,16 @@
 														WHERE killed = "'.$playerCreatureId.'" 
 														AND killed_by = "'.$playerCreatureId.'" 
 														ORDER BY id DESC LIMIT '.$limitStart.', '.$limitNumber);
+		}
+		
+		public function getTotalPVEKills() {
+		    $row = mysql_fetch_assoc(mysql_query('SELECT COUNT(id) total FROM kills 
+                                                    WHERE killed != 18
+                                                    	AND killed != 0
+                                                        AND killed != 999
+                                                        AND killed_by != 18
+                                                        AND killed_by != 0'));
+		    return $row['total'];
 		}
 		
 		public function getKillTablePVE($limit = false, $limitStart = 0, $limitNumber = 0) {
@@ -243,6 +260,12 @@
 														ORDER BY id DESC LIMIT '.$limitStart.', '.$limitNumber);
 		}
 		
+		public function getTotalOtherKilles() {
+		    $row = mysql_fetch_assoc(mysql_query('SELECT COUNT(id) total FROM kills
+		                                                        WHERE killed_by != 999'));
+		    return $row['total'];
+		}
+		
 		public function getKillTableOther($limit = false, $limitStart = 0, $limitNumber = 0) {
 			$noneCreatureId = QueryUtils::getCreatureIdByName("None");
 			$blockCreatureId = QueryUtils::getCreatureIdByName("Block");
@@ -263,58 +286,65 @@
 		}
 		      
         public function getMostKillerPVP() {
-            $row = mysql_fetch_assoc(mysql_query('SELECT `killed_by_uuid`, COUNT(`killed_by_uuid`) kills
+            $row = mysql_fetch_assoc(mysql_query('SELECT `killed_by_uuid` name, COUNT(`killed_by_uuid`) count
                                                     FROM kills
                                                     WHERE `killed_uuid` IS NOT NULL
                                                     	AND `killed_uuid` != " "
                                                     	AND `killed_by_uuid` IS NOT NULL
                                                     	AND `killed_by_uuid` != " "
                                                     GROUP BY `killed_by_uuid`
-                                                    ORDER BY kills DESC'));
-            return $this->getPlayer($row['killed_by_uuid']);
+                                                    ORDER BY count DESC'));
+            return $row;
         }
         
         public function getMostKilledPVP() {
-            $row = mysql_fetch_assoc(mysql_query('SELECT `killed_uuid`, COUNT(`killed_uuid`) killed
+            $row = mysql_fetch_assoc(mysql_query('SELECT `killed_uuid` name, COUNT(`killed_uuid`) count
                                                     FROM kills
                                                     WHERE `killed_uuid` IS NOT NULL
                                                     	AND `killed_uuid` != " "
                                                     	AND `killed_by_uuid` IS NOT NULL
                                                     	AND `killed_by_uuid` != " "
                                                     GROUP BY `killed_uuid`
-                                                    ORDER BY killed DESC'));
-            return $this->getPlayer($row['killed_uuid']);
+                                                    ORDER BY count DESC'));
+            return $row;
         }
         
         public function getMostDangerousWeapon() {
-            $row = mysql_fetch_assoc(mysql_query('SELECT `killed_using`, COUNT(`killed_using`) weapon
+            $row = mysql_fetch_assoc(mysql_query('SELECT `killed_using` name, COUNT(`killed_using`) count
                                                                 FROM kills 
                                                                 WHERE killed_using != -1                                                               
                                                                 GROUP BY `killed_using`
-                                                                ORDER BY weapon DESC'));
-            return $row['killed_using'];
-        }
+                                                                ORDER BY count DESC'));
+            return $row;
+        }       
+        
         
         public function getMostDangerousPVECreature() {
-            $row = mysql_fetch_assoc(mysql_query('SELECT `killed_by`, COUNT(`killed_by`) creature
+            $row = mysql_fetch_assoc(mysql_query('SELECT `killed_by` name, COUNT(`killed_by`) count
                                                     FROM kills 
                                                     WHERE killed_by != 999                                                     
                                                     	AND killed_by != 0
                                                     	AND killed_by != 18
                                                     GROUP BY `killed_by`
-                                                    ORDER BY creature DESC'));
-            return $row['killed_by'];            
+                                                    ORDER BY count DESC'));
+            return $row;            
         }
         
         public function getMostKilledPVECreature() {
-            $row = mysql_fetch_assoc(mysql_query('SELECT `killed`, COUNT(`killed`) c_kills
+            $row = mysql_fetch_assoc(mysql_query('SELECT `killed` name, COUNT(`killed`) count
                                                                 FROM kills 
                                                                 WHERE killed != 999                                                     
                                                                 	AND killed != 0
                                                                 	AND killed != 18
                                                                 GROUP BY `killed`
-                                                                ORDER BY c_kills DESC'));
-            return $row['killed'];
+                                                                ORDER BY count DESC'));
+            return $row;
+        }
+        
+        public function getTotalTypeKills($typeID) {
+            $row = mysql_fetch_assoc(mysql_query('SELECT COUNT(id) count FROM kills
+            										WHERE kill_type = '.$typeID));
+            return $row['count'];
         }
 		
 		public function getKillTableCreature($creatureTypeId) {
@@ -328,7 +358,6 @@
 		public function getKillTableType($killTypeId) {
 			return QueryUtils::get2DArrayFromQuery('SELECT * FROM kills WHERE kill_type = '.$killTypeId.'"');
 		}
-
 		
 		public function getKillTableUsing($itemId) {
 			return QueryUtils::get2DArrayFromQuery('SELECT * FROM kills WHERE killed_using = "'.$itemId.'"');

@@ -1,15 +1,15 @@
+<span id="infoLabel"><?php echo(STRING_SERVER_CURRENTLY_ONLINE); ?> (<?php echo $cnt = $serverObj->getAllPlayersOnlineCount(); ?>) :</span>
 <?php
-$playerOnlineArray = $serverObj->getAllPlayersOnline();
-?>
-<span id="infoLabel"><?php echo(STRING_SERVER_CURRENTLY_ONLINE); ?> (<?php echo(count($playerOnlineArray)); ?>) :</span>
-<?php
-	foreach($playerOnlineArray as $player) {
-	?>
-	<span id="online">
-		<a id="onlinePlayer" href="?view=player&uuid=<?php echo($player->getUUID()); ?>"><?php echo($player->getName()); ?></a>
-	</span>
-	<?php
-	}
+    if($cnt > 0) {
+        $playerOnlineArray = $serverObj->getAllPlayersOnline();
+        foreach($playerOnlineArray as $player) {
+            ?>
+            	<span id="online">
+            		<a id="onlinePlayer" href="?view=player&uuid=<?php echo($player->getUUID()); ?>"><?php echo($player->getName()); ?></a>
+            	</span>
+        	<?php
+    	}
+    }
 ?>
 <br /><br />
 <div id="subTitle">
@@ -20,7 +20,7 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
         <?php echo(STRING_SERVER_REGISTERED_PLAYERS); ?>:
     </span>
     <span id="info">
-        <?php echo(count($serverObj->getAllPlayers())); ?>
+        <?php echo $serverObj->getAllPlayers(); ?>
     </span>
 </div>
 <div id="infoLine">
@@ -134,9 +134,10 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
     </span>
     <span id="info">
         <?php 
-            echo QueryUtils::getResourceNameById($serverObj->getBlocksMostPlaced()); 
+            $block = $serverObj->getBlocksMostPlaced();
+            echo QueryUtils::getResourceNameById($block); 
             echo ' - (';
-            echo$serverObj->getBlocksPlacedOfTypeTotal($serverObj->getBlocksMostPlaced());  
+            echo$serverObj->getBlocksPlacedOfTypeTotal($block);  
             echo(STRING_ALL_TIMES); 
             echo ')';
         ?>
@@ -156,9 +157,10 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
     </span>
     <span id="info">
         <?php 
-            echo(QueryUtils::getResourceNameById($serverObj->getBlocksMostDestroyed()));
+            $block = $serverObj->getBlocksMostDestroyed();
+            echo(QueryUtils::getResourceNameById($block));
             echo ' - (';
-            echo($serverObj->getBlocksDestroyedOfTypeTotal($serverObj->getBlocksMostDestroyed())); 
+            echo($serverObj->getBlocksDestroyedOfTypeTotal($block)); 
             echo(STRING_ALL_TIMES);
             echo ')'; 
         ?>
@@ -184,9 +186,10 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
     </span>
     <span id="info">
         <?php 
-            echo(QueryUtils::getResourceNameById($serverObj->getMostPickedUp())); 
+            $pick = $serverObj->getMostPickedUp();
+            echo(QueryUtils::getResourceNameById($pick)); 
             echo ' - (';
-            echo($serverObj->getPickedUpOfTypeTotal($serverObj->getMostPickedUp())); 
+            echo($serverObj->getPickedUpOfTypeTotal($pick)); 
             echo(STRING_ALL_TIMES);
             echo ')';
         ?>
@@ -209,9 +212,10 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
     </span>
     <span id="info">
         <?php 
-            echo(QueryUtils::getResourceNameById($serverObj->getMostDropped()));
+            $drop = $serverObj->getMostDropped();
+            echo(QueryUtils::getResourceNameById($drop));
             echo ' - (';
-            echo($serverObj->getDroppedOfTypeTotal($serverObj->getMostDropped())); 
+            echo($serverObj->getDroppedOfTypeTotal($drop)); 
             echo(STRING_ALL_TIMES);
             echo ')';
         ?>
@@ -225,7 +229,7 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
         <?php echo(STRING_ALL_TOTAL_DEATHS); ?>:
     </span>
     <span id="info">
-        <?php echo($serverObj->getKillTable() ? count($serverObj->getKillTable()) : 0); ?>
+        <?php echo $serverObj->getTotalKills(); ?>
     </span>
 </div>
 <br />
@@ -235,9 +239,10 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
     </span>
     <span id="info">
         <?php 
-            echo(QueryUtils::getResourceNameById($serverObj->getMostDangerousWeapon())); 
+            $weapon = $serverObj->getMostDangerousWeapon();
+            echo(QueryUtils::getResourceNameById($weapon['name'])); 
             echo ' - (';
-            echo ($serverObj->getKillTableUsing($serverObj->getMostDangerousWeapon()) ? count($serverObj->getKillTableUsing($serverObj->getMostDangerousWeapon())) : 0); 
+            echo $weapon['count']; 
             echo(STRING_ALL_KILLS);
             echo ')'; 
         ?>
@@ -249,7 +254,7 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
         <?php echo(STRING_ALL_PVP_KILLS); ?>:
     </span>
     <span id="info">
-        <?php echo($serverObj->getKillTablePVP() ? count ($serverObj->getKillTablePVP()) : 0); ?>
+        <?php echo $serverObj->getTotalPVPKills(); ?>
     </span>
 </div>
 <div id="infoLine">
@@ -258,13 +263,14 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
     </span>
     <span id="info">
         <?php
-            $player = $serverObj->getMostKillerPVP();
+            $ar = $serverObj->getMostKillerPVP();
+            $player = $serverObj->getPlayer($ar['name']);
             if ($player) {
             	?>
             	<a id="onlinePlayer" href="?view=player&uuid=<?php echo($player->getUUID()); ?>"><?php echo($player->getName()); ?></a> 
             	- (
             	    <?php 
-            	        echo (count($player->getPlayerKillTableCreature(QueryUtils::getCreatureIdByName("Player"))));
+            	        echo $ar['count'];
             	        echo(STRING_ALL_PVP_KILLS); 
             	    ?>
             	   )
@@ -277,13 +283,14 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
     </span>
     <span id="info">
     <?php
-        $player = $serverObj->getMostKilledPVP();
+        $ar = $serverObj->getMostKilledPVP();
+        $player = $serverObj->getPlayer($ar['name']);
         if ($player) {
         	?>
         	<a id="onlinePlayer" href="?view=player&uuid=<?php echo($player->getUUID()); ?>"><?php echo($player->getName()); ?></a> 
         	- (
         	    <?php 
-        	        echo (count($player->getPlayerDeathTableCreature(QueryUtils::getCreatureIdByName("Player")))); 
+        	        echo $ar['count']; 
         	        echo(STRING_ALL_PVP_DEATHS); 
         	    ?>
         	  )
@@ -297,7 +304,7 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
         <?php echo(STRING_ALL_PVE_KILLS); ?>:
     </span>
     <span id="info">
-        <?php echo($serverObj->getKillTablePVE() ? count($serverObj->getKillTablePVE()) : 0); ?>
+        <?php echo $serverObj->getTotalPVEKills(); ?>
     </span>
 </div>
 <div id="infoLine">
@@ -306,9 +313,10 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
     </span>
     <span id="info">
         <?php 
-            echo(QueryUtils::getCreatureNameById($serverObj->getMostDangerousPVECreature()));
+            $ar = $serverObj->getMostDangerousPVECreature();
+            echo(QueryUtils::getCreatureNameById($ar['name']));
             echo ' - (';
-            echo($serverObj->getMostDangerousPVECreature() ? count($serverObj->getKillTableCreature($serverObj->getMostDangerousPVECreature())) : 0); 
+            echo $ar['count'];
             echo(STRING_ALL_KILLS);
             echo ')'; 
         ?>
@@ -320,9 +328,10 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
     </span>
     <span id="info">
         <?php 
-            echo(QueryUtils::getCreatureNameById($serverObj->getMostKilledPVECreature()));
+            $ar = $serverObj->getMostKilledPVECreature();
+            echo QueryUtils::getCreatureNameById($ar['name']);
             echo ' - (';
-            echo($serverObj->getMostKilledPVECreature() ? count($serverObj->getDeathTableCreature($serverObj->getMostKilledPVECreature())) : 0); 
+            echo $ar['count'];
             echo(STRING_ALL_DEATHS);
             echo ')'; 
         ?>
@@ -334,7 +343,7 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
         <?php echo(STRING_ALL_OTHER_TYPE_DEATHS); ?>:
     </span>
     <span id="info">
-        <?php echo($serverObj->getKillTableOther() ? count($serverObj->getKillTableOther()) : 0); ?>
+        <?php echo $serverObj->getTotalOtherKilles(); ?>
     </span>
 </div>
 <div id="infoLine">
@@ -342,7 +351,7 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
         <?php echo(STRING_ALL_FALLING_DEATHS); ?>:
     </span>
     <span id="info">
-        <?php echo($serverObj->getKillTableType(QueryUtils::getKillTypeIdByName("Fall")) ? count($serverObj->getKillTableType(QueryUtils::getKillTypeIdByName("Fall"))) : 0); ?>
+        <?php echo $serverObj->getTotalTypeKills(QueryUtils::getKillTypeIdByName("Fall")); ?>
     </span>
 </div>
 <div id="infoLine">
@@ -350,7 +359,7 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
         <?php echo(STRING_ALL_DROWNING_DEATHS); ?>:
     </span>
     <span id="info">
-        <?php echo($serverObj->getKillTableType(QueryUtils::getKillTypeIdByName("Drowning")) ? count($serverObj->getKillTableType(QueryUtils::getKillTypeIdByName("Drowning"))) : 0); ?>
+        <?php echo $serverObj->getTotalTypeKills(QueryUtils::getKillTypeIdByName("Drowning")); ?>
     </span>
 </div>
 <div id="infoLine">
@@ -358,7 +367,7 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
         <?php echo(STRING_ALL_SUFFOCATING_DEATHS); ?>:
     </span>
     <span id="info">
-        <?php echo($serverObj->getKillTableType(QueryUtils::getKillTypeIdByName("Suffocation")) ? count($serverObj->getKillTableType(QueryUtils::getKillTypeIdByName("Suffocation"))) : 0); ?>
+        <?php echo $serverObj->getTotalTypeKills(QueryUtils::getKillTypeIdByName("Suffocation")); ?>
     </span>
 </div>
 <div id="infoLine">
@@ -366,7 +375,7 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
         <?php echo(STRING_ALL_LIGHTENING_DEATHS); ?>:
     </span>
     <span id="info">
-        <?php echo($serverObj->getKillTableType(QueryUtils::getKillTypeIdByName("Lightening")) ? count($serverObj->getKillTableType(QueryUtils::getKillTypeIdByName("Lightening"))) : 0); ?>
+        <?php echo $serverObj->getTotalTypeKills(QueryUtils::getKillTypeIdByName("Lightening")); ?>
     </span>
 </div>
 <div id="infoLine">
@@ -374,7 +383,7 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
         <?php echo(STRING_ALL_LAVA_DEATHS); ?>:
     </span>
     <span id="info">
-        <?php echo($serverObj->getKillTableType(QueryUtils::getKillTypeIdByName("Lava")) ? count($serverObj->getKillTableType(QueryUtils::getKillTypeIdByName("Lava"))) : 0); ?>
+        <?php echo $serverObj->getTotalTypeKills(QueryUtils::getKillTypeIdByName("Lava")); ?>
     </span>
 </div>
 <div id="infoLine">
@@ -382,7 +391,7 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
         <?php echo(STRING_ALL_FIRE_DEATHS); ?>:
     </span>
     <span id="info">
-        <?php echo($serverObj->getKillTableType(QueryUtils::getKillTypeIdByName("Fire")) ? count($serverObj->getKillTableType(QueryUtils::getKillTypeIdByName("Fire"))) : 0); ?>
+        <?php echo $serverObj->getTotalTypeKills(QueryUtils::getKillTypeIdByName("Fire")); ?>
     </span>
 </div>
 <div id="infoLine">
@@ -390,7 +399,7 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
         <?php echo(STRING_ALL_FIRE_TICK_DEATHS); ?>:
     </span>
     <span id="info">
-        <?php echo($serverObj->getKillTableType(QueryUtils::getKillTypeIdByName("Fire Tick")) ? count($serverObj->getKillTableType(QueryUtils::getKillTypeIdByName("Fire Tick"))) : 0); ?>
+        <?php echo $serverObj->getTotalTypeKills(QueryUtils::getKillTypeIdByName("Fire Tick")); ?>
     </span>
 </div>
 <div id="infoLine">
@@ -398,6 +407,6 @@ $playerOnlineArray = $serverObj->getAllPlayersOnline();
         <?php echo(STRING_ALL_EXPLOSION_DEATHS); ?>:
     </span>
     <span id="info">
-        <?php echo($serverObj->getKillTableType(QueryUtils::getKillTypeIdByName("Entity Explosion")) ? count($serverObj->getKillTableType(QueryUtils::getKillTypeIdByName("Entity Explosion"))) : 0); ?>
+        <?php echo $serverObj->getTotalTypeKills(QueryUtils::getKillTypeIdByName("Entity Explosion")); ?>
     </span>
 </div>
