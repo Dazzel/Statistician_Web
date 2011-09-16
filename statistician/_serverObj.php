@@ -212,6 +212,24 @@
 		    return $row['total'];		    
 		}
 		
+		public function getPVPKills($limit) { //TODO query is broken :( must get player killed creature AND creature killed player
+		    return mysql_query('SELECT p.player_name killer, 
+		    						p.uuid killerID,
+		    						p2.player_name victim,
+		    						p2.uuid killedID,
+		    						k.time time, 
+		    						r.description weapon 
+		    					FROM kills k
+                                INNER JOIN resource_desc r ON k.killed_using = r.resource_id
+                                INNER JOIN players p ON k.killed_by_uuid = p.uuid
+                                INNER JOIN players p2 ON k.killed_uuid = p2.uuid
+                                WHERE k.killed = 999 
+                                	AND k.killed_by = 999
+                                ORDER BY time DESC 
+		    					'.$limit.'');
+		}		
+
+		
 		public function getKillTablePVP($limit = false, $limitStart = 0, $limitNumber = 0) {
 			$playerCreatureId = QueryUtils::getCreatureIdByName("Player");
 			if (!$limit)
@@ -234,6 +252,25 @@
                                                         AND killed_by != 18
                                                         AND killed_by != 0'));
 		    return $row['total'];
+		}
+		
+		public function getPVEKills($limit) {
+		    return mysql_query('SELECT c.creature_name victim,
+		    						p.player_name killed,
+		    						p.uuid killedID,
+		    						k.time time, 
+		    						r.description weapon 
+		    					FROM kills k
+                                INNER JOIN resource_desc r ON k.killed_using = r.resource_id
+                                INNER JOIN creatures c ON k.killed = c.id
+                                INNER JOIN players p ON k.killed_by_uuid = p.uuid
+                                WHERE killed != 18
+                                	AND killed != 0
+                                    AND killed != 999
+                                    AND killed_by != 18
+                                    AND killed_by != 0
+                                ORDER BY time DESC 
+		    					'.$limit.'');		    
 		}
 		
 		public function getKillTablePVE($limit = false, $limitStart = 0, $limitNumber = 0) {

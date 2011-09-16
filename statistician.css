@@ -154,12 +154,36 @@ td {
 	width: 100%;
 	text-align: center;
 	font-size: 12px;
-	font-weight: bold;
+	margin-top: 5px;
 }
 
-#pageSelector_CurrentPage {
-	color: blue;
+.paginate {
+	font-family: Arial, Helvetica, sans-serif;
+}
+a.paginate {
+	border: 1px solid #000080;
+	padding: 2px 6px 2px 6px;
+	text-decoration: none;
+}
+a.paginate:hover {
+	background-color: #000080;
 	text-decoration: underline;
+}
+a.current {
+	border: 1px solid #000080;
+	font: bold Arial,Helvetica,sans-serif;
+	padding: 2px 6px 2px 6px;
+	cursor: default;
+	background:#000080;
+	color: blue;
+	text-decoration: none;
+}
+span.inactive {
+	border: 1px solid #999;
+	font-family: Arial, Helvetica, sans-serif;
+	padding: 2px 6px 2px 6px;
+	color: #999;
+	cursor: default;
 }
 
 #killRow{

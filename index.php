@@ -1,4 +1,4 @@
-<?php 
+<?php
 $start = microtime(true);
 require_once ('statistician/statistician.php');
 

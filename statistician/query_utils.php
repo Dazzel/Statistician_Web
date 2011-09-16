@@ -30,6 +30,24 @@
 			return QueryUtils::get2DArrayFromQuery("SELECT * FROM resource_desc ORDER BY description ASC");
 		}
 		
+		public static function getItemList() {
+		    return mysql_query('SELECT r.description name, 
+		    						SUM(p.num_pickedup) picked, 
+		    						SUM(p.num_dropped) dropped FROM pickup_drop p 
+                                LEFT JOIN resource_desc r ON p.item = r.resource_id
+                                GROUP BY p.item
+                                ORDER BY name ASC');		    
+		}
+		
+		public static function getBlockList() {
+		    return mysql_query('SELECT r.description name, 
+		    						SUM(b.num_placed) placed, 
+		    						SUM(b.num_destroyed) destroyed FROM blocks b 
+                                LEFT JOIN resource_desc r ON b.block_id = r.resource_id
+                                GROUP BY b.block_id
+                                ORDER BY name ASC');
+		}
+		
 		public static function getKillTypeIdByName($killTypeName) {
 			$row = mysql_fetch_assoc(mysql_query("SELECT id FROM kill_types WHERE description = '{$killTypeName}'"));
 			return $row['id'];

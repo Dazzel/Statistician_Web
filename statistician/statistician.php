@@ -7,6 +7,7 @@
 	require_once('_serverObj.php');
 	require_once('_playerObj.php');
 	require_once('query_utils.php');
+	require_once('paginator.php');
 
 	class STATISTICIAN {
 	
