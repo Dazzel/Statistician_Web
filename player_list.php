@@ -1,5 +1,5 @@
 <a name="playerList">
-	<div id="subTitle"><?php echo(STRING_SERVER_GLOBAL_ALL_REGISTERED_PLAYERS); ?></div>
+	<div id="subTitle"><?php echo(STRING_SERVER_GLOBAL_ALL_REGISTERED_PLAYERS); echo ' ('.$serverObj->getAllPlayers().')'; ?></div>
 </a>
 <table>
  <th></th><th><?php echo(STRING_ALL_NAME); ?></th><th><?php echo(STRING_PLAYER_LAST_LOGON); ?></th><th><?php echo(STRING_PLAYER_JOIN_DATE); ?></th>

@@ -343,7 +343,7 @@
         <?php echo(STRING_ALL_OTHER_TYPE_DEATHS); ?>:
     </span>
     <span id="info">
-        <?php echo $serverObj->getTotalOtherKilles(); ?>
+        <?php echo $serverObj->getTotalOtherKills(); ?>
     </span>
 </div>
 <div id="infoLine">
