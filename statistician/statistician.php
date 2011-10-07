@@ -3,11 +3,12 @@
 	/* unless you know what you're doing, then, by all means, be my guest, touch away. ~ ChaseHQ */
 
 	require_once('config.php');
-    require_once ('locale/' . LOCALE . '.php');
+        require_once ('locale/' . LOCALE . '.php');
 	require_once('_serverObj.php');
 	require_once('_playerObj.php');
 	require_once('query_utils.php');
 	require_once('paginator.php');
+        require_once ('version.php');
 
 	class STATISTICIAN {
 	
@@ -15,11 +16,11 @@
 		private $_ObjServer;
 		
 		function __construct() {
-			$this->secureGlobals();	
-			@$sql_connection = mysql_connect(DB_SERVER . ':' . DB_PORT,DB_USER,DB_PASSWORD) or die("Statistician Web Interface could not acquire connection to Database");
-			@mysql_select_db(DB_NAME) or die("Statistician Web Interface connected to SQL server but could not select the database");
+                    $this->secureGlobals();	
+                    @$sql_connection = mysql_connect(DB_SERVER . ':' . DB_PORT,DB_USER,DB_PASSWORD) or die("Statistician Web Interface could not acquire connection to Database");
+                    @mysql_select_db(DB_NAME) or die("Statistician Web Interface connected to SQL server but could not select the database");
 
-			$this->_ObjServer = new SERVER();
+                    $this->_ObjServer = new SERVER();
 		}
 		
 		function __destruct() {

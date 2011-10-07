@@ -3,7 +3,6 @@ $start = microtime(true);
 require_once ('statistician/statistician.php');
 
 $sObj = new STATISTICIAN();
-$serverObj = $sObj->getServer();
 
 ?>
 
@@ -68,12 +67,12 @@ $serverObj = $sObj->getServer();
         <br />
         <?php echo (STRING_MISC_TRANSLATED_TO_BY); ?> <?php if (TRANSLATOR_CONTACT != '') { ?> <a href="<?php echo (TRANSLATOR_CONTACT); ?>"> <?php } echo(TRANSLATOR_NAME); ?><?php if (TRANSLATOR_CONTACT != '') { ?> </a> <?php } ?>
         <br />
-        <?php echo(STRING_MISC_PORTAL_VERSION); ?> 1.3.2
+        <?php echo(STRING_MISC_PORTAL_VERSION); ?> <?php echo VERSION; ?>
         <br />
         <?php
             $end = microtime(true);            
-            $laufzeit = $end - $start;
-            echo "Laufzeit: ".round($laufzeit, 2)." Sekunden!";
+            $runtime = $end - $start;
+            echo round($runtime, 2)." sec.";
          ?>
         </div>
 </body>
