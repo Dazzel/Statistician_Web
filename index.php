@@ -3,6 +3,7 @@ $start = microtime(true);
 require_once ('statistician/statistician.php');
 
 $sObj = new STATISTICIAN();
+$serverObj = $sObj->getServer();
 
 ?>
 
