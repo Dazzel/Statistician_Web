@@ -3,7 +3,9 @@ $pag = new Paginator();
 $pag->mid_range = 5;
 $pag->items_per_page = 30;
 
-if($_GET['cat'] == 'pvp') {
+$cat = (isset($_GET['cat']) ? $_GET['cat'] : '');
+
+if($cat == 'pvp') {
     echo '<a href="?view=globalKills" ><div id="subCategory">'.STRING_SERVER_GLOBAL_KILL_STATISTICS.'</div></a>';
     echo '<div id="subCategory"> '.STRING_ALL_PVP_KILLS.' ('.$serverObj->getTotalPVPKills().')</div>';    
     
@@ -59,7 +61,7 @@ if($_GET['cat'] == 'pvp') {
     echo $pagination;
     echo '</div>';
 }
-elseif($_GET['cat'] == 'pve') {
+elseif($cat == 'pve') {
     echo '<a href="?view=globalKills" ><div id="subCategory">'.STRING_SERVER_GLOBAL_KILL_STATISTICS.'</div></a>';
     echo '<div id="subCategory"> '.STRING_ALL_PVE_KILLS.' ('.$serverObj->getTotalPVEKills().')</div>';
     
@@ -129,7 +131,7 @@ elseif($_GET['cat'] == 'pve') {
             echo $pagination;
             echo '</div>';
 }
-else if($_GET['cat'] == 'other') {
+else if($cat == 'other') {
     echo '<a href="?view=globalKills" ><div id="subCategory">'.STRING_SERVER_GLOBAL_KILL_STATISTICS.'</div></a>';
     echo '<div id="subCategory"> '.STRING_ALL_OTHER_DEATHS.' ('.$serverObj->getTotalOtherKills().')</div>';
     

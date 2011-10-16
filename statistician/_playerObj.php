@@ -10,6 +10,7 @@
 	
 		function __construct($playerUUID) {
 			$this->_playerUUID = $playerUUID;
+                        $this->popCheck();
 		}
 		
 		private function popCheck() {
@@ -18,7 +19,6 @@
 		}
 		
 		public function getName() {
-			$this->popCheck();
 			return $this->_playerRow['player_name'];
 		}
 		
@@ -27,60 +27,48 @@
 		}
 		
 		public function isOnline() {
-			$this->popCheck();
 			if ($this->_playerRow['online'] == 'Y')
 				return true;
-				else
-				return false;
+                        else return false;
 		}
 		
 		public function getFirstLogin() {
-			$this->popCheck();
 			return $this->_playerRow['firstever_login'];
 		}
 		
 		public function getLastLogin() {
-			$this->popCheck();
 			return $this->_playerRow['last_login'];
 		}
 		
 		public function getNumberOfLogins() {
-			$this->popCheck();
 			return $this->_playerRow['num_logins'];
 		}
 		
 		public function getCurrentLoginTime() {
-			$this->popCheck();
 			return $this->_playerRow['this_login'];
 		}
 		
 		public function getNumberOfSecondsLoggedOn() {
-			$this->popCheck();
 			return $this->_playerRow['num_secs_loggedon'];
 		}
 		
 		public function getDistanceTraveledTotal() {
-			$this->popCheck();
 			return $this->_playerRow['distance_traveled'];
 		}
 		
 		public function getDistanceTraveledByMinecart() {
-			$this->popCheck();
 			return $this->_playerRow['distance_traveled_in_minecart'];
 		}
 		
 		public function getDistanceTraveledByBoat() {
-			$this->popCheck();
 			return $this->_playerRow['distance_traveled_in_boat'];
 		}
 		
 		public function getDistanceTraveledByPig() {
-			$this->popCheck();
 			return $this->_playerRow['distance_traveled_on_pig'];
 		}
 		
 		public function getDistanceTraveledByFoot() {
-			$this->popCheck();
 			return $this->getDistanceTraveledTotal() - ($this->getDistanceTraveledByMinecart() + $this->getDistanceTraveledByBoat() + $this->getDistanceTraveledByPig());
 		}
 		

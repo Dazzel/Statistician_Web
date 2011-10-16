@@ -1,28 +1,11 @@
 <?php
 $_player = $serverObj->getPlayer($_GET['uuid']);
 ?>
+
 <?php
-    if (USE_SKINVIEWER) {
-?>
-    <div id="skinViewerFloat">
-        <object width="320" height="320" classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
-                codebase="http://java.sun.com/products/plugin/autodl/jinstall-1_4-windows-i586.cab#Version=1,4,0,0">
-            <param name="name" value="<?php echo($_player->getName()); ?>" />
-            <param name="code" value="net.minecraft.skintest.ModelPreviewApplet"/>
-            <param name="archive" value="http://www.minecraft.net/skin/skintest.jar"/>
-            <param name="codebase" value="."/>
-            <!--[if !IE]> -->
-            <object width="320" height="320" type="application/x-java-applet">
-                <param name="name" value="<?php echo($_player->getName()); ?>"/>
-                <param name="code" value="net.minecraft.skintest.ModelPreviewApplet"/>
-                <param name="archive" value="http://www.minecraft.net/skin/skintest.jar"/>
-                <param name="codebase" value="."/>
-            </object>
-            <!-- <![endif]-->
-        </object>
-    </div>
-<?php
-    }
+    /*
+     * skinviewer removed temporaly
+     */
 ?>
 <div id="subTitle"><?php echo($_player->getName()) ?> <?php echo(STRING_PLAYER_STATISTICS); ?></div>
 <div id="infoLine">
