@@ -13,6 +13,7 @@ $serverObj = $sObj->getServer();
   <title><?php echo (SERVER_NAME); ?> :: Statistician</title>
   <link href="statistician.css" rel="stylesheet" type="text/css" />
   <script type="text/javascript" src="jquery-1.5.min.js"></script>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 
 <script type="text/javascript">
